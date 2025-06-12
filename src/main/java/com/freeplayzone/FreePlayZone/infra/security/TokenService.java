@@ -1,0 +1,57 @@
+package com.freeplayzone.FreePlayZone.infra.security;
+
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.JWTCreationException;
+import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.freeplayzone.FreePlayZone.exception.BusinessRuleException;
+import com.freeplayzone.FreePlayZone.domain.user.User;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+
+@Service
+public class TokenService
+{
+    @Value("${api.security.token.secret}")
+    private String secret;
+
+    public String generateToken(User user)
+    {
+        try {
+            Algorithm algorithm = Algorithm.HMAC256(secret);
+            return JWT.create()
+                    .withIssuer("FreePlayZone")
+                    .withSubject(user.getEmail())
+                    .withExpiresAt(expiracao(30))
+                    .sign(algorithm);
+        } catch (JWTCreationException exception){
+            throw new BusinessRuleException("Erro ao gerar token de acesso!");
+        }
+    }
+
+    private static Instant expiracao(Integer minutos)
+    {
+        return LocalDateTime.now().plusMinutes(minutos).toInstant
+                (ZoneOffset.of("-03:00"));
+    }
+
+    public String validateToken(String token)
+    {
+        try {
+            Algorithm algorithm = Algorithm.HMAC256(secret);
+            return JWT.require(algorithm)
+                    .withIssuer("FreePlayZone")
+                    .build()
+                    .verify(token)
+                    .getSubject();
+        }
+        catch (JWTVerificationException exception)
+        {
+            return null;
+        }
+    }
+}
