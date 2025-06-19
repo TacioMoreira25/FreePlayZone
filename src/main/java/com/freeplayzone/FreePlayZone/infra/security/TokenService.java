@@ -4,7 +4,6 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
-import com.freeplayzone.FreePlayZone.exception.BusinessRuleException;
 import com.freeplayzone.FreePlayZone.domain.user.User;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -28,8 +27,10 @@ public class TokenService
                     .withSubject(user.getEmail())
                     .withExpiresAt(expiracao(30))
                     .sign(algorithm);
-        } catch (JWTCreationException exception){
-            throw new BusinessRuleException("Erro ao gerar token de acesso!");
+        }
+        catch (JWTCreationException exception)
+        {
+            throw new RuntimeException("Erro ao gerar token de acesso!", exception);
         }
     }
 

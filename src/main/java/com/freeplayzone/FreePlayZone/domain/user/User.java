@@ -1,10 +1,10 @@
 package com.freeplayzone.FreePlayZone.domain.user;
 
-import com.freeplayzone.FreePlayZone.dto.RegisterRequestDTO;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
@@ -19,12 +19,17 @@ public class User implements UserDetails
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
+    @Setter
     @Column(unique = true, nullable = false)
     private String name;
 
+    @Setter
+    @Getter
     @Column(unique = true, nullable = false)
     private String email;
 
+    @Getter
+    @Setter
     @Column(nullable = false)
     private String password;
 
@@ -35,26 +40,6 @@ public class User implements UserDetails
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return null;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
     }
 }
 

@@ -30,7 +30,8 @@ public class JwtAuthFilter extends OncePerRequestFilter
             throws ServletException, IOException
     {
         String token = recuperarTokenRequisicao(request);
-        if(token != null){
+        if(token != null)
+        {
             String email = tokenService.validateToken(token);
             User user = this.userRepository.findByEmail
                     (email).orElseThrow();
