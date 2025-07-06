@@ -51,4 +51,17 @@ public class AuthController
             return ResponseEntity.notFound().build();
         }
     }
+
+    @PutMapping("/update-password")
+    public ResponseEntity<?> updatePassword(@RequestBody UpdatePasswordRequestDTO body)
+    {
+        try {
+            userService.updatePassword(body);
+            return ResponseEntity.ok().build();
+        }
+        catch (RuntimeException e)
+        {
+            return ResponseEntity.notFound().build();
+        }
+    }
 }

@@ -51,6 +51,4 @@ public class GeminiService
             throw new RuntimeException("Erro ao consultar Gemini API: " + e.getMessage(), e);
         }
     }
-
-
 }

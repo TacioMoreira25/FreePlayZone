@@ -1,8 +1,9 @@
 package com.freeplayzone.FreePlayZone.infra.security;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import com.freeplayzone.FreePlayZone.infra.Cors.CorsConfig;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -14,32 +15,45 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+
+import java.util.List;
+
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig
 {
-    @Autowired
-    private JwtAuthFilter jwtAuthFilter;
-    @Autowired
-    private UserDetailsService userDetailsService;
+    private final JwtAuthFilter jwtAuthFilter;
+    private final UserDetailsService userDetailsService;
+    private final CorsConfig corsConfig;
+
+    public SecurityConfig(JwtAuthFilter jwtAuthFilter, UserDetailsService userDetailsService,
+                          CorsConfig corsConfig) {
+        this.jwtAuthFilter = jwtAuthFilter;
+        this.userDetailsService = userDetailsService;
+        this.corsConfig = corsConfig;
+    }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception
-    {
-        return http
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http
                 .csrf(csrf -> csrf.disable())
-                .authorizeHttpRequests(req -> req
-                        .requestMatchers("/auth/login", "/auth/register")
+                .cors(cors -> cors.configurationSource(corsConfig.
+                        corsConfigurationSource()))
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/auth/login", "/auth/register", "/auth/update-password")
                         .permitAll()
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .anyRequest().authenticated()
                 )
-                .sessionManagement(sm ->
-                        sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
-                .build();
+                .sessionManagement(session ->
+                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+
+        return http.build();
     }
+
     @Bean
-    public PasswordEncoder encriptador(){
+    public PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
     }
 
@@ -49,5 +63,4 @@ public class SecurityConfig
     {
         return authenticationConfiguration.getAuthenticationManager();
     }
-
 }

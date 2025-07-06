@@ -1,4 +1,4 @@
 package com.freeplayzone.FreePlayZone.dto;
 
-public record UpdateRequestDTO(String email,String newName, String newPassword) {
+public record UpdateRequestDTO(String email,String newName) {
 }

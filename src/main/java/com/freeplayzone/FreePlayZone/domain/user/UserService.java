@@ -4,6 +4,9 @@ import com.freeplayzone.FreePlayZone.dto.*;
 import com.freeplayzone.FreePlayZone.infra.security.TokenService;
 import com.freeplayzone.FreePlayZone.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -39,7 +42,7 @@ public class UserService
             throw new IllegalArgumentException("Senha inválida.");
         }
         String token = tokenService.generateToken(user);
-        return new loginResponseDTO(user.getUsername(), token);
+        return new loginResponseDTO(user.getName(), token);
     }
 
     public void updateUser(UpdateRequestDTO body)
@@ -47,7 +50,26 @@ public class UserService
         User user = userRepository.findByEmail(body.email())
                 .orElseThrow(() -> new RuntimeException("Usuário não encontrado."));
         user.setName(body.newName());
+        userRepository.save(user);
+    }
+    public void updatePassword(UpdatePasswordRequestDTO body)
+    {
+        User user = userRepository.findByEmail(body.email())
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado."));
         user.setPassword(passwordEncoder.encode(body.newPassword()));
         userRepository.save(user);
+    }
+
+    public User getUserLogado()
+    {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication == null || !(authentication.getPrincipal() instanceof UserDetails)) {
+            throw new RuntimeException("Usuário não autenticado.");
+        }
+
+        String email = ((UserDetails) authentication.getPrincipal()).getUsername();
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado."));
     }
 }

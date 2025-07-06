@@ -20,6 +20,7 @@ public class User implements UserDetails
     private long id;
 
     @Setter
+    @Getter
     @Column(unique = true, nullable = false)
     private String name;
 
@@ -34,7 +35,7 @@ public class User implements UserDetails
     private String password;
 
     public String getUsername() {
-        return name;
+        return email;
     }
 
     @Override

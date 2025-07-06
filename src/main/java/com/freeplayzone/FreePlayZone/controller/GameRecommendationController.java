@@ -13,13 +13,13 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/preferences")
+@RequestMapping("/recommendations")
 @RequiredArgsConstructor
 public class GameRecommendationController
 {
     private final GameRecommendationService gameRecommendationService;
 
-    @PostMapping("Games")
+    @PostMapping("/games")
     public ResponseEntity<List<GamesResponseDTO>> recommendGames
             (@RequestBody PreferenceRequestDTO body)
     {
