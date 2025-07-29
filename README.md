@@ -20,4 +20,4 @@ Este repositório contém toda a API da aplicação, incluindo autenticação JW
 
 ### 🔗 Repositório do Frontend
 
-Você pode acessar a interface da plataforma neste link: [DKT Learn - Frontend](https://github.com/TacioMoreira/dkt-learn-front)
+Você pode acessar a interface da plataforma neste link: [FreePlayZone-front](https://github.com/TacioMoreira25/FreePlayZone-front)
