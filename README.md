@@ -79,12 +79,3 @@ jwt.expiration=86400000
 ./mvnw spring-boot:run
 ```
 A API estará disponível por padrão na porta `8080` (`http://localhost:8080`).
-
----
-
-## 🧪 Testes
-
-Para executar os testes unitários e de integração com JUnit e Mockito:
-```bash
-./mvnw test
-```
